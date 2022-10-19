@@ -1,0 +1,112 @@
+---
+title: "test"
+output: html_document
+date: "2022-09-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r}
+data <- read.csv('processed_data/language_endangerment.csv')
+```
+
+```{r}
+colnames(data)
+```
+
+
+```{r}
+# create a new column that is the ratio # of noun concepts: # of adj concepts
+data["noun_adj_concept_ratio"] = data["num_unique_noun_concepts"] /data["num_unique_adj_concepts" ]
+
+# get rid of Inf values
+data <- data[data["noun_adj_concept_ratio"] != 'Inf', ]
+data["noun_adj_concept_ratio"]
+```
+
+
+```{r}
+vars = c('L1_pop', 'GDPpc', 'life_expectancy_60', 'education_spending', 'noun_adj_concept_ratio',
+         "num_unique_noun_concepts", "num_unique_adj_concepts")
+r_squareds = c()
+for (v in vars) {
+  print(v)
+  f <- paste("value ~", v)
+  #print(f)
+  lmod <- lm(as.formula(f), data)
+  r_squared <- summary(lmod)$r.squared
+  #print(paste("R^2:", r_squared))
+  print(summary(lmod))
+  r_squareds <- append(r_squareds, r_squared)
+}
+
+
+```
+```{r}
+# recode as 0 and 1
+adj_noun_idx <- data['value'] == 1
+no_pref_idx <- data['value'] == 2
+noun_adj_idx <- data['value'] == 3
+
+data1 <- data
+data1['value'][no_pref_idx] = 0
+data1['value'][noun_adj_idx] = 0
+data1['value']
+```
+
+```{r}
+lmod <- glm(value ~ GDPpc + life_expectancy_60 + education_spending + noun_adj_concept_ratio, data1, family='binomial')
+summary(lmod)
+
+lmod <- glm(value ~ L1_pop + GDPpc + life_expectancy_60 + education_spending + noun_adj_concept_ratio, data1, family='binomial')
+summary(lmod)
+```
+```{r}
+data2 <- data[data['description'] != 'Adjective-Noun', ]
+no_pref_idx <- data2['description'] == 'No dominant order'
+noun_adj_idx <- data2['description'] == 'Noun-Adjective'
+data2['value'][no_pref_idx] = 1
+data2['value'][noun_adj_idx] = 0
+data2['value']
+```
+```{r}
+lmod <- glm(value ~ GDPpc + life_expectancy_60 + education_spending + noun_adj_concept_ratio, data2, family='binomial')
+summary(lmod)
+
+lmod <- glm(value ~ L1_pop + GDPpc + life_expectancy_60 + education_spending + noun_adj_concept_ratio, data2, family='binomial')
+summary(lmod)
+```
+
+
+```{r}
+ggplot(data=data1, aes(x = description, y = noun_adj_concept_ratio)) +
+  geom_violin() +
+  stat_summary(fun = "mean",
+               geom = "crossbar", 
+               width = 0.5,
+               colour = "red")
+```
+
+
+```{r}
+ggplot(data=data1, aes(x = description, y = num_unique_adj_concepts)) +
+  geom_violin() +
+  stat_summary(fun = "mean",
+               geom = "crossbar", 
+               width = 0.5,
+               colour = "red")
+```
+
+
+```{r}
+ggplot(data=data1, aes(x = description, y = num_unique_noun_concepts)) +
+  geom_violin() +
+  stat_summary(fun = "mean",
+               geom = "crossbar", 
+               width = 0.5,
+               colour = "red")
+```
+

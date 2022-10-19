@@ -5,8 +5,9 @@ import pdb
 class ContinuousIncrementalRSA():
 	def __init__(self, adjectives, nouns,
 						objects, utterances, 
-						alpha=5, v_adj=0.95, v_noun=0.99,
-						cost_coef=0):
+						alpha=5, 
+						v_adj=0.95, v_noun=0.99,
+						adj_cost=None, noun_cost=None):
 		self.adjectives = adjectives
 		self.nouns = nouns
 		self.objects = objects
@@ -14,7 +15,8 @@ class ContinuousIncrementalRSA():
 		self.alpha = alpha
 		self.v_adj = v_adj
 		self.v_noun = v_noun
-		self.cost_coef = cost_coef
+		self.adj_cost = adj_cost
+		self.noun_cost = noun_cost
 
 
 	def normalize_rows(self, matrix):
@@ -47,7 +49,13 @@ class ContinuousIncrementalRSA():
 
 
 	def cost(self, utt):
-		return self.cost_coef * len(utt.split())
+		"""
+		Return the production cost for the given utterance
+		"""
+		if utt in self.nouns and self.noun_cost is not None: return self.noun_cost
+		if utt in self.adjectives and self.adj_cost is not None: return self.adj_cost
+
+		return 0
 
 
 	def inc_cont_meaning(self, obj, utt):
@@ -111,6 +119,7 @@ class ContinuousIncrementalRSA():
 			_, probs = self.word_level_literal_listener(curr_utt, meaning_fn=self.inc_cont_meaning) # specify meaning_fn here
 			utility = np.array(probs)
 			val = np.exp(self.alpha * (np.log(utility) - self.cost(curr_utt)))
+
 			all_vals.append(val)
 
 		data = self.normalize_rows(np.array(all_vals).T)
@@ -121,6 +130,9 @@ class ContinuousIncrementalRSA():
 
 
 	def incremental_pragmatic_speaker(self, obj, utt):
+		"""
+		Compute the product of the probabilities produced by the incremental speaker
+		"""
 		all_vals = []
 		utt_len = len(utt.split())
 		context = ''
@@ -133,6 +145,7 @@ class ContinuousIncrementalRSA():
 		it's a 1 token utterance)
 		"""
 		for i in range(2):	
+			breakpoint()
 			_, probs = self.word_level_pragmatic_speaker(obj, context)
 			partial_utt = " ".join(utt.split()[:i+1])
 
