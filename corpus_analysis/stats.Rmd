@@ -9,8 +9,9 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(lme4)
 library(PerformanceAnalytics)
-
-
+library(tibble)
+library(dplyr)
+library(tidyr)
 ```
 
 ```{r}
@@ -115,10 +116,7 @@ lmod <- glm(adj_noun_order_coded ~
             family='binomial')
 summary(lmod)
 ```
-```{r}
-data1['log_GDPpc', 'education_spending']
 
-```
 
 ```{r}
 # make the language categorical so that we can have it as a random effect
@@ -199,9 +197,5 @@ facet_wrap(~language_family) +
   theme(strip.text.x = element_text(size = 20),
         axis.text = element_text(size = 16),
         axis.text.x = element_text(angle = 90))
-```
-
-```{r}
-colnames(data1)
 ```
 
