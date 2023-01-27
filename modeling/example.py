@@ -12,7 +12,7 @@ from models import ContinuousIncrementalRSA
 from utils import *
 
 adjectives = ["red", "blue"]
-nouns = ["pin", "dress"]
+nouns = ["pin", "dress", "truck"]
 objects = get_all_objects(adjectives, nouns)
 utterances = get_all_utterances(adjectives, nouns)
 v_adj = 0.95

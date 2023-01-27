@@ -10,7 +10,6 @@ library(tidyverse)
 library(lme4)
 library(PerformanceAnalytics)
 library(tibble)
-library(dplyr)
 library(tidyr)
 ```
 
@@ -109,8 +108,7 @@ ggplot(data1, aes(log_life_expectancy_60)) +
 ```
 ```{r}
 lmod <- glm(adj_noun_order_coded ~ 
-                log_L1_pop + log_GDPpc + log_life_expectancy_60 + 
-                education_spending + noun_adj_word_ratio + log_num_unique_words,
+                log_L1_pop + log_GDPpc + noun_adj_word_ratio + log_num_unique_words,
             data1, 
             #control = glmerControl(optimizer="bobyqa"),
             family='binomial')

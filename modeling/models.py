@@ -118,6 +118,9 @@ class ContinuousIncrementalRSA():
 		for curr_utt in possible_utterances:
 			_, probs = self.word_level_literal_listener(curr_utt, meaning_fn=self.inc_cont_meaning) # specify meaning_fn here
 			utility = np.array(probs)
+			#breakpoint()
+			# add a tiny epsilon to avoid np.log(0)
+			utility = utility + 0.0001
 			val = np.exp(self.alpha * (np.log(utility) - self.cost(curr_utt)))
 
 			all_vals.append(val)
@@ -145,7 +148,7 @@ class ContinuousIncrementalRSA():
 		it's a 1 token utterance)
 		"""
 		for i in range(2):	
-			breakpoint()
+			
 			_, probs = self.word_level_pragmatic_speaker(obj, context)
 			partial_utt = " ".join(utt.split()[:i+1])
 
