@@ -1,7 +1,7 @@
-# word-ordering
+# crosslinguistic-order
 
-Repository for Cogsci 2023 submission.
+Repository for Cogsci 2023 paper, "The cross-linguistic order of adjectives and nouns may be the result of iterated pragmatic pressures on referential communication".
 
-The `models` folder contains the code to run the simulations and create visualization. `models.py` defines the continuous incremental RSA model.
+The `models` folder contains the code to run and visualize the simulations in the paper. `models.py` defines the continuous incremental RSA model.
 
-The `analysis` folder contains exploratory visual analysis and regression models for the WALS, CLICS and language endangerment datasets.
+`env.yml` specifies the Python dependencies for running the simulations. 
